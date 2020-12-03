@@ -26,21 +26,27 @@ public class Main {
 
         //Checking for minimal
         for(int i = 0; i < num; i ++){
-            for(int j = 0; j < num; j++){
-                if(i == 0){ // if its the first index it will always be minimal
-                    padType.put(lilyPad[i][0],1);
-                    break;
-                }else if(!lilyPad[i][0].gcd(lilyPad[j][0]).equals(BigInteger.ONE) && lilyPad[i][0].compareTo(lilyPad[j][0]) > 0){ //compare i index to every j
-                    padType.put(lilyPad[i][0],0);
-                    miniCount++;
-                    break;
-                }else{
-                    padType.put(lilyPad[i][0],1);
+            if(i == 0) { // if its the first index it will always be minimal
+                padType.put(lilyPad[i][0], 1);
+            }
+            for(int j = 0; j < i; j++){
+                if(!lilyPad[i][0].gcd(lilyPad[j][0]).equals(BigInteger.ONE)){ //compare i index to every j
+                    padType.put(lilyPad[i][0], 0);
                 }
             }
+            padType.putIfAbsent(lilyPad[i][0], 1);
         }
 
-        //Checking for Maximal
+//        //Checking for Maximal
+//        for(int i = 0; i < num; i ++){
+//            for(int j = 0; j < num; j++){
+//                if(lilyPad[i][0].gcd(lilyPad[j][0]).equals(BigInteger.ONE) && lilyPad[i][0].compareTo(lilyPad[j][0]) < 0){
+//                    break;
+//                }else{
+//                    padType.put(lilyPad[i][0],padType.get(lilyPad[i][0])+2);
+//                }
+//            }
+//        }
 //        padType.replace(BigInteger.valueOf(5), padType.get(BigInteger.valueOf(5))+1);
         for (Map.Entry<BigInteger, Integer> entry : padType.entrySet()) {
             System.out.println(entry.getKey() + "/" + entry.getValue());
