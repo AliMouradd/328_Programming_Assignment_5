@@ -34,20 +34,28 @@ public class Main {
                     padType.put(lilyPad[i][0], 0);
                 }
             }
-            padType.putIfAbsent(lilyPad[i][0], 1);
+            if(padType.get(lilyPad[i][0]) == null){
+                padType.put(lilyPad[i][0],1);
+                miniCount++;
+            }
         }
 
-//        //Checking for Maximal
-//        for(int i = 0; i < num; i ++){
-//            for(int j = 0; j < num; j++){
-//                if(lilyPad[i][0].gcd(lilyPad[j][0]).equals(BigInteger.ONE) && lilyPad[i][0].compareTo(lilyPad[j][0]) < 0){
-//                    break;
-//                }else{
-//                    padType.put(lilyPad[i][0],padType.get(lilyPad[i][0])+2);
-//                }
-//            }
-//        }
-//        padType.replace(BigInteger.valueOf(5), padType.get(BigInteger.valueOf(5))+1);
+        //Checking for Maximal
+        for(int i = 0; i < num; i ++) {
+            if (i == num - 1) { // if its the first index it will always be minimal
+                padType.put(lilyPad[i][0], padType.get(lilyPad[i][0]) + 2);
+                break;
+            }
+            for (int j = i; j < num; j++) {
+                if (!lilyPad[i][0].gcd(lilyPad[j][0]).equals(BigInteger.ONE)) {
+                    break;
+                }
+                if (j == num - 1) {
+                    padType.put(lilyPad[i][0], padType.get(lilyPad[i][0]) + 2);
+                }
+            }
+        }
+
         for (Map.Entry<BigInteger, Integer> entry : padType.entrySet()) {
             System.out.println(entry.getKey() + "/" + entry.getValue());
         }
