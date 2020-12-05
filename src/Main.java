@@ -2,13 +2,17 @@
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         Scanner reader = new Scanner(new File("input.txt"));
         ArrayList<BigInteger> temp = new ArrayList<BigInteger>();
+        ArrayList<BigInteger> maxi = new ArrayList<BigInteger>();
+        ArrayList<BigInteger> mini = new ArrayList<BigInteger>();
         HashMap<BigInteger, Integer> padType = new HashMap<>();
         int num = 0;
         int miniCount = 0;
@@ -29,42 +33,36 @@ public class Main {
         }
 
         //Checking for minimal
-        for(int i = 0; i < num; i ++){
-            if(i == 0) { // if its the first index it will always be minimal
-                padType.put(lilyPad[i], 1);
-            }
-            for(int j = 0; j < i; j++){
-                if(!lilyPad[i].gcd(lilyPad[j]).equals(BigInteger.ONE)){ //compare i index to every j
-                    padType.put(lilyPad[i], 0);
+        for(int i = 0; i < num; i ++) {
+            for(int j = 0; j < num; j++){
+                if(lilyPad[i].compareTo(lilyPad[j]) > 0){
+                    if(!lilyPad[i].gcd(lilyPad[j]).equals(BigInteger.ONE)){
+                        padType.put(lilyPad[i],0);
+                        break;
+                    }
+                }else if(lilyPad[i].compareTo(lilyPad[j]) == 0){
+                    mini.add(lilyPad[i]);
+                    miniCount++;
+                    break;
                 }
-            }
-            if(padType.get(lilyPad[i]) == null){
-                padType.put(lilyPad[i],1);
-                miniCount++;
             }
         }
 
         //Checking for Maximal
         for(int i = 0; i < num; i ++) {
-            if (i == num - 1) { // if its the first index it will always be minimal
-                padType.put(lilyPad[i], padType.get(lilyPad[i]) + 2);
-                maxiCount++;
-                break;
-            }
-            for (int j = i; j < num-1; j++) {
-                if (!lilyPad[i].gcd(lilyPad[j+1]).equals(BigInteger.ONE)) {
-                    break;
-                }
-                if (lilyPad[i + 1].equals(lilyPad[num - 1])) {
-                    padType.put(lilyPad[i], padType.get(lilyPad[i]) + 2);
+            for(int j = num-1; j >= 0 ; j--){
+                if(lilyPad[j].compareTo(lilyPad[i]) >0){
+                    if(!lilyPad[i].gcd(lilyPad[j]).equals(BigInteger.ONE)){
+                        break;
+                    }
+                }else if(lilyPad[i].compareTo(lilyPad[j]) == 0){
+                    maxi.add(lilyPad[i]);
                     maxiCount++;
+                    break;
                 }
             }
         }
 
-        for (Map.Entry<BigInteger, Integer> entry : padType.entrySet()) {
-            System.out.println(entry.getKey() + "/" + entry.getValue());
-        }
 
         if(maxiCount < miniCount){
             maxPossiblePaths = maxiCount;
@@ -73,27 +71,24 @@ public class Main {
         }else{
             maxPossiblePaths = miniCount;
         }
+//        System.out.println(miniCount + " "+ maxiCount);
+
+        for(int i = 1; i < maxPossiblePaths; i++) {
+            for (int j = 0; j < num; j++){
+                if(mini.contains(lilyPad[j]) && maxi.contains(lilyPad[j])){
 
 
-        for(int i = 0; i < maxPossiblePaths; i++){
-            // step one: check if last input is both(3)
-            if(padType.get(lilyPad[num-1]) == 3){
-                path = path + "1 "+ lilyPad[num-1]+" \n";
-                padType.put(lilyPad[num-1], padType.get(lilyPad[num-1])+1);
-            }else{
-
-                for(BigInteger a : lilyPad){
-                    ArrayList<BigInteger> GCD = new ArrayList<>();
-                    for(BigInteger b : lilyPad){
-                        if(!a.equals(b) && !a.gcd(b).equals(BigInteger.ONE)){
-                            GCD.add(b);
-                        }
-                    }
-                    Collections.sort(GCD);
-                    System.out.println(GCD);
-                }
             }
         }
+//
+//        BigInteger x = new BigInteger("10820322439476171969239561972831622363591587095567017595903261292872410082008573133717357915377891644427637");
+//        BigInteger y = new BigInteger("364193336868995826520225067823931193797505032165230974786049684644031691576405293124655104470188748932531065147357");
+//
+//        System.out.println(x.gcd(y));
+
+        FileWriter writer = new FileWriter("output.txt");
+        writer.write(path);
+        writer.close();
 
 
     }
