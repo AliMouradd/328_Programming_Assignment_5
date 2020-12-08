@@ -85,7 +85,7 @@ public class Main {
             outerLoop:
             for(BigInteger b : lilyPad){
                 if(padType.get(b) == 3){
-                    path = path +"1 "+ b+ "\n";
+                    path = path +"1 "+ b+ " \n";
                     maxi.remove(b);
                     mini.remove(b);
                     padType.replace(b, 4);
@@ -93,7 +93,7 @@ public class Main {
                 }else if(padType.get(b) == 1){
                     for(BigInteger c : maxi){
                         if(!b.gcd(c).equals(BigInteger.ONE)){
-                            path = path +"1 "+b+ " "+ c+ "\n";
+                            path = path +"1 "+b+ " "+ c+ " \n";
                             maxi.remove(c);
                             mini.remove(b);
                             padType.replace(c, 4);
@@ -101,16 +101,16 @@ public class Main {
                             break outerLoop;
                         }else{
                             ArrayList<BigInteger> possiblePath = new ArrayList<>();
-                            BigInteger previous = new BigInteger("0");
+                            BigInteger previous = new BigInteger("1");
                             for(BigInteger d: neither){
                                 if(!d.gcd(previous).equals(BigInteger.ONE) && !d.gcd(c).equals(BigInteger.ONE)){
                                     path = path +"1 "+ b + " ";
                                     for(BigInteger e : possiblePath){
                                         path = path + e + " ";
                                         neither.remove(e);
-                                        padType.replace(d, 4);
+                                        padType.replace(e, 4);
                                     }
-                                    path = path + c + "\n";
+                                    path = path + c + " \n";
                                     maxi.remove(c);
                                     mini.remove(b);
                                     padType.replace(b, 4);
@@ -120,7 +120,7 @@ public class Main {
                                 }
                                 if(!d.gcd(b).equals(BigInteger.ONE)){
                                     if(!d.gcd(c).equals(BigInteger.ONE)){
-                                        path = path + b +" " + d + " "+c + "\n";
+                                        path = path +"1 "+ b +" " + d + " "+c + " \n";
                                         neither.remove(d);
                                         maxi.remove(c);
                                         mini.remove(b);
