@@ -1,7 +1,6 @@
 // Ali Mourad
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -10,9 +9,10 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException {
         Scanner reader = new Scanner(new File("input.txt"));
-        ArrayList<BigInteger> temp = new ArrayList<BigInteger>();
-        ArrayList<BigInteger> maxi = new ArrayList<BigInteger>();
-        ArrayList<BigInteger> mini = new ArrayList<BigInteger>();
+        ArrayList<BigInteger> temp = new ArrayList<>();
+        ArrayList<BigInteger> maxi = new ArrayList<>();
+        ArrayList<BigInteger> mini = new ArrayList<>();
+        ArrayList<BigInteger> neither = new ArrayList<>();
         HashMap<BigInteger, Integer> padType = new HashMap<>();
         int num = 0;
         int miniCount = 0;
@@ -42,6 +42,7 @@ public class Main {
                     }
                 }else if(lilyPad[i].compareTo(lilyPad[j]) == 0){
                     mini.add(lilyPad[i]);
+                    padType.put(lilyPad[i], 1);
                     miniCount++;
                     break;
                 }
@@ -57,12 +58,18 @@ public class Main {
                     }
                 }else if(lilyPad[i].compareTo(lilyPad[j]) == 0){
                     maxi.add(lilyPad[i]);
+                    padType.replace(lilyPad[i], padType.get(lilyPad[i]) + 2);
                     maxiCount++;
                     break;
                 }
             }
         }
 
+        for(BigInteger a: lilyPad){
+            if(padType.get(a) == 0){
+                neither.add(a);
+            }
+        }
 
         if(maxiCount < miniCount){
             maxPossiblePaths = maxiCount;
@@ -73,19 +80,66 @@ public class Main {
         }
 //        System.out.println(miniCount + " "+ maxiCount);
 
-        for(int i = 1; i < maxPossiblePaths; i++) {
-            for (int j = 0; j < num; j++){
-                if(mini.contains(lilyPad[j]) && maxi.contains(lilyPad[j])){
 
+        for(int i = 0; i < maxPossiblePaths; i++) {
+            outerLoop:
+            for(BigInteger b : lilyPad){
+                if(padType.get(b) == 3){
+                    path = path +"1 "+ b+ "\n";
+                    maxi.remove(b);
+                    mini.remove(b);
+                    padType.replace(b, 4);
+                    break;
+                }else if(padType.get(b) == 1){
+                    for(BigInteger c : maxi){
+                        if(!b.gcd(c).equals(BigInteger.ONE)){
+                            path = path +"1 "+b+ " "+ c+ "\n";
+                            maxi.remove(c);
+                            mini.remove(b);
+                            padType.replace(c, 4);
+                            padType.replace(b, 4);
+                            break outerLoop;
+                        }else{
+                            ArrayList<BigInteger> possiblePath = new ArrayList<>();
+                            BigInteger previous = new BigInteger("0");
+                            for(BigInteger d: neither){
+                                if(!d.gcd(previous).equals(BigInteger.ONE) && !d.gcd(c).equals(BigInteger.ONE)){
+                                    path = path +"1 "+ b + " ";
+                                    for(BigInteger e : possiblePath){
+                                        path = path + e + " ";
+                                        neither.remove(e);
+                                        padType.replace(d, 4);
+                                    }
+                                    path = path + c + "\n";
+                                    maxi.remove(c);
+                                    mini.remove(b);
+                                    padType.replace(b, 4);
+                                    padType.replace(c, 4);
+                                    break outerLoop;
 
+                                }
+                                if(!d.gcd(b).equals(BigInteger.ONE)){
+                                    if(!d.gcd(c).equals(BigInteger.ONE)){
+                                        path = path + b +" " + d + " "+c + "\n";
+                                        neither.remove(d);
+                                        maxi.remove(c);
+                                        mini.remove(b);
+                                        padType.replace(b, 4);
+                                        padType.replace(c, 4);
+                                        padType.replace(d, 4);
+                                        break outerLoop;
+                                    }
+                                    possiblePath.add(d);
+                                    previous = d;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
-//
-//        BigInteger x = new BigInteger("10820322439476171969239561972831622363591587095567017595903261292872410082008573133717357915377891644427637");
-//        BigInteger y = new BigInteger("364193336868995826520225067823931193797505032165230974786049684644031691576405293124655104470188748932531065147357");
-//
-//        System.out.println(x.gcd(y));
 
+//        System.out.println(path);
         FileWriter writer = new FileWriter("output.txt");
         writer.write(path);
         writer.close();
