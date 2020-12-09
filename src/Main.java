@@ -83,7 +83,7 @@ public class Main {
 
         for(int i = 0; i < maxPossiblePaths; i++) {
             outerLoop:
-            for(BigInteger b : lilyPad){
+            for(BigInteger b : lilyPad){// is the first lilypad a maximal pad as well? if yes it becomes its own path
                 if(padType.get(b) == 3){
                     path = path +"1 "+ b+ " \n";
                     maxi.remove(b);
@@ -99,40 +99,29 @@ public class Main {
                             padType.replace(c, 4);
                             padType.replace(b, 4);
                             break outerLoop;
-                        }else{
-                            ArrayList<BigInteger> possiblePath = new ArrayList<>();
-                            BigInteger previous = new BigInteger("1");
-                            for(BigInteger d: neither){
-                                if(!d.gcd(previous).equals(BigInteger.ONE) && !d.gcd(c).equals(BigInteger.ONE)){
-                                    path = path +"1 "+ b + " ";
-                                    for(BigInteger e : possiblePath){
-                                        path = path + e + " ";
-                                        neither.remove(e);
-                                        padType.replace(e, 4);
-                                    }
-                                    path = path + c + " \n";
-                                    maxi.remove(c);
+                        }
+                    }
+                    ArrayList<BigInteger> possiblePath = new ArrayList<>();
+                    BigInteger previous = BigInteger.ONE;
+                    for(BigInteger d : neither){
+                        if(!d.gcd(b).equals(BigInteger.ONE)){
+                            for(BigInteger c : maxi){
+                                if(!d.gcd(c).equals(BigInteger.ONE)){
+                                    path = path + "1 " + b + " " + d + " " + c + " \n";
                                     mini.remove(b);
+                                    neither.remove(d);
+                                    maxi.remove(c);
                                     padType.replace(b, 4);
                                     padType.replace(c, 4);
+                                    padType.replace(d, 4);
                                     break outerLoop;
-
-                                }
-                                if(!d.gcd(b).equals(BigInteger.ONE)){
-                                    if(!d.gcd(c).equals(BigInteger.ONE)){
-                                        path = path +"1 "+ b +" " + d + " "+c + " \n";
-                                        neither.remove(d);
-                                        maxi.remove(c);
-                                        mini.remove(b);
-                                        padType.replace(b, 4);
-                                        padType.replace(c, 4);
-                                        padType.replace(d, 4);
-                                        break outerLoop;
-                                    }
-                                    possiblePath.add(d);
-                                    previous = d;
                                 }
                             }
+                            if(!d.gcd(b).equals(BigInteger.ONE) ||!d.gcd(previous).equals(BigInteger.ONE)){
+                                possiblePath.add(d);
+                                previous = d;
+                            }
+
                         }
                     }
                 }
